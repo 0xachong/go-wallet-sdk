@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcec/v2/ecdsa"
 	"github.com/btcsuite/btcd/btcutil"
@@ -94,6 +95,13 @@ func (build *TransactionBuilder) AddOutput(address string, amount int64) {
 func (build *TransactionBuilder) AddOutput2(address string, script string, amount int64) {
 	output := Output{address: address, script: script, amount: amount}
 	build.outputs = append(build.outputs, output)
+}
+
+func (build *TransactionBuilder) AdjustGas(gas int64, index int) {
+	if len(build.outputs) == 0 {
+		return
+	}
+	build.outputs[index].amount -= gas
 }
 
 func (build *TransactionBuilder) Build() (*wire.MsgTx, error) {
